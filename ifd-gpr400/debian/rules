@@ -1,0 +1,51 @@
+#!/usr/bin/make -f
+
+export DH_VERBOSE=1
+
+CFLAGS = -Wall -g
+
+build:
+	dh_testdir
+	$(MAKE)
+
+clean:
+	dh_testdir
+	dh_testroot
+	dh_clean
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	$(MAKE) install DESTDIR=`pwd`/debian/libifdgpr400
+
+binary-indep: build install
+
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+	dh_install
+	dh_installudev --priority=95
+	dh_installdebconf	
+#	dh_installmenu
+#	dh_installemacsen
+#	dh_installpam
+#	dh_installinit
+#	dh_installcron
+#	dh_installman 
+#	dh_installinfo
+#	dh_undocumented
+	dh_link
+	dh_strip
+	dh_compress
+	dh_fixperms
+	dh_makeshlibs -V
+	dh_installdeb
+#	dh_perl
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install configure

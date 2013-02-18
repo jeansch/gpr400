@@ -1,0 +1,133 @@
+#!/usr/bin/make -f
+
+# Uncomment this to turn on verbose mode.
+export DH_VERBOSE=1
+
+CFLAGS = -Wall -g
+
+# some default definitions, important!
+#
+# Name of the source package
+psource:=gpr400cs-source
+
+# The short upstream name, used for the module source directory
+sname:=gpr400cs
+
+
+# The package version
+cversion := $(shell dpkg-parsechangelog | grep '^Version:' | cut -d' ' -f2 | cut -d- -f1 | cut -d\: -f2)
+
+### KERNEL SETUP
+### Setup the stuff needed for making kernel module packages
+### taken from /usr/share/kernel-package/sample.module.rules
+
+# prefix of the target package name
+PACKAGE=gpr400cs-modules
+# modifieable for experiments or debugging m-a
+MA_DIR ?= /usr/share/modass
+# load generic variable handling
+-include $(MA_DIR)/include/generic.make
+# load default rules, including kdist, kdist_image, ...
+-include $(MA_DIR)/include/common-rules.make
+
+# module assistant calculates all needed things for us and sets
+# following variables:
+# KSRC (kernel source directory), KVERS (kernel version string), KDREV
+# (revision of the Debian kernel-image package), CC (the correct
+# compiler), VERSION (the final package version string), PKGNAME (full
+# package name with KVERS included), DEB_DESTDIR (path to store DEBs)
+
+# The kdist_configure target is called by make-kpkg modules_config and
+# by kdist* rules by dependency. It should configure the module so it is
+# ready for compilation (mostly useful for calling configure).
+# prep-deb-files from module-assistant creates the neccessary debian/ files
+kdist_configure: prep-deb-files
+
+# the kdist_clean target is called by make-kpkg modules_clean and from
+# kdist* rules. It is responsible for cleaning up any changes that have
+# been made by the other kdist_commands (except for the .deb files created)
+kdist_clean: clean
+	$(MAKE) $(MFLAGS) -f debian/rules clean
+#
+### end  KERNEL SETUP
+
+# the binary-modules rule is invoked by module-assistant while processing the
+# kdist* targets. It is called by module-assistant or make-kpkg and *not*
+# during a normal build
+binary-modules: prep-deb-files
+	dh_testroot
+	dh_clean -k
+
+	# Build the module
+	./configure --kernel-path=$(KSRC)
+	$(MAKE)
+
+	# Install the module
+	install -D -m 0644 gpr400_cs.ko debian/$(PACKAGE)-$(KVERS)/lib/modules/$(KVERS)/misc/gpr400_cs.ko
+
+	dh_installdocs
+	dh_compress
+	dh_fixperms
+	dh_installmodules
+	dh_installdeb
+	dh_gencontrol -- -v$(VERSION)
+	dh_md5sums
+	dh_builddeb --destdir=$(DEB_DESTDIR)
+	dh_clean -k
+
+build:
+
+clean:
+	dh_testdir
+	#dh_testroot
+
+	# Cleaning package
+	-$(MAKE) clean
+
+	dh_clean
+
+install: DH_OPTIONS=
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_installdirs
+
+
+	# Create the directories to install the source into
+	dh_installdirs -p$(psource)  usr/src/$(sname)-$(cversion)
+
+	# Copy only the driver source to the proper location
+	cp -a Makefile *.c *.h debian/$(psource)/usr/src/$(sname)-$(cversion)
+	touch debian/$(psource)/usr/src/$(sname)-$(cversion)/config-host.mak
+
+	# Copy the needed debian/ pieces to the proper location
+	mkdir debian/$(psource)/usr/src/$(sname)-$(cversion)/debian
+	cp debian/*modules.in* \
+		debian/$(psource)/usr/src/$(sname)-$(cversion)/debian
+	cp debian/control debian/rules debian/changelog debian/copyright \
+		debian/compat debian/$(psource)/usr/src/$(sname)-$(cversion)/debian/
+
+        # Create DKMS conf
+	sed "s/CVERSION/$(cversion)/" debian/dkms.conf.in > debian/$(psource)/usr/src/$(sname)-$(cversion)/dkms.conf
+
+	dh_install
+
+binary-arch: build install
+
+binary-indep: build install
+	dh_testdir
+	dh_testroot
+	dh_installdocs
+	dh_install
+	dh_link
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install binary-modules kdist kdist_configure kdist_image kdist_clean

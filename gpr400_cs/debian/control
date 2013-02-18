@@ -1,0 +1,12 @@
+Source: gpr400cs
+Section: misc
+Priority: optional
+Maintainer: Jean Schurger <jean@schurger.org>
+Build-Depends: debhelper (>= 7), bzip2
+Standards-Version: 3.8.0
+
+Package: gpr400cs-source
+Architecture: all
+Depends: dkms, make, libc6-dev, libifdgpr400
+Description: Source for the GPR400 module
+ This package provides the source code for the gpr400_cs kernel modules.

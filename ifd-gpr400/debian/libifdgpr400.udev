@@ -1,0 +1,1 @@
+ATTR{prod_id2}=="GPR400", RUN+="/etc/init.d/pcscd restart"

@@ -1,0 +1,12 @@
+ifd-gpr400 (0.3.1-1~ppa1) jaunty; urgency=high
+
+  * Try to make build on amd64 on launchpad
+
+ -- Jean Schurger <jean@schurger.org>  Fri, 18 Sep 2009 09:22:19 -0400
+
+ifd-gpr400 (0.3.1-1~ppa) jaunty; urgency=high
+
+  * Release
+
+ -- Jean Schurger <jean@schurger.org>  Wed, 16 Sep 2009 11:10:02 -0400
+

@@ -1,0 +1,18 @@
+Source: ifd-gpr400
+Section: misc
+Priority: extra
+Maintainer: Jean Schurger <jean@schurger.org>
+Build-Depends: debhelper (>= 4.1.16), libpcsclite-dev, libc6-dev
+Standards-Version: 3.7.2
+
+Package: libifdgpr400
+Section: libs
+Priority: extra
+Architecture: any
+Depends: ${shlibs:Depends}, debconf | debconf-2.0
+Suggests: libpcsclite1, pcscd
+Provides: pcsc-ifd-handler
+Description: GPR400 smartcard reader PCSC driver
+ This library provides PCSC IFD handler implementation
+ for the GPR400 smartcard readers. It need the kernel module to works
+ .

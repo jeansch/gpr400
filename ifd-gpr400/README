@@ -1,0 +1,62 @@
+Name    : IFD Handler for GEMPLUS GPR400 hardware for MUSCLE PC/SC Lite
+Author  : Joe Phillips <joe.phillips@innovationsw.com> modified by Jean Schurger <jean@schurger.org>
+Revision: August 6, 2001 (1.0)
+License : See files LICENSE and COPYING.LIB
+
+This is a IFD Handler for the GEMPLUS GPR400 hardware for use with the 
+MUSCLE project PC/SC Lite package.  It requires the following:
+
+- GEMPLUS GPR400 hardware (http://www.gemplus.com)
+- gpr400_cs PCMCIA kernel module (http://www.linuxnet.com)
+- pcsc-lite from the MUSCLE project (http://www.linuxnet.com)
+
+
+INSTALLING
+
+Build the IFD handler with the following command:
+
+	$ make
+
+Install the IFD handler by copying it to your IFD handler installation
+directory (i.e. /usr/local/lib/readers/)
+
+	# cp libgpr400_ifd.so /usr/local/lib/readers/
+
+To use the IFD handler, make sure it is referenced in your /etc/reader.conf
+file.  Also, the gpr400_cs PCMCIA kernel module must be installed in order
+for this driver to function properly.  This should be done when you 
+insert the physical device into your PCMCIA slot.
+
+
+KNOWN ISSUES
+
+T=0 support seems ok but T=1 support is untested and unknown to work.
+
+Only a single GPR400 device can be handled by this IFD handler.  No LUN support.
+
+IFDHGetCapabilities is only minimally implemented due to missing TAG_* 
+definitions.
+
+IFDHSetCapabilities is not implemented.
+
+IFDHSetProtocolParameter is not implemented.
+
+IFDHControl is not implemented.
+
+Hotplug of GPR400 devices is not yet supported.
+
+
+CREDITS
+
+This IFD Handler code is based on the IFD devkit released by David Corcoran
+and MUSCLE.  Visit MUSCLE on the web at http://www.linuxnet.com
+
+This IFD handler would not be possible without the gpr400 PCMCIA kernel
+driver originally developed and released by Wolf Geldmacher <wolf@comunicon.ch>
+in the card-0.9.6 tarball found on the MUSCLE site.  Other source code
+found in that tarball has been useful in developing this IFD handler.
+
+This package is maintained by Joe Phillips <joe.phillips@innovationsw.com>
+with resources provided by Innovation Software Group, LLC - 
+http://www.innovationsw.com
+

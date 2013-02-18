@@ -1,0 +1,41 @@
+#!/bin/sh
+#
+# postinst configure most-recently-configured-version 
+# old-postinst abort-upgrade new-version 
+# conflictor's-postinst abort-remove in-favour package new-version 
+# deconfigured's-postinst abort-deconfigure in-favour failed-install-package version removing conflicting-package version 
+#
+
+set -e
+
+cfgdir=/etc/reader.conf.d
+cfg=$cfgdir/gpr400
+
+if [ "$1" = "configure" ]; then
+
+ # Source debconf library.
+ . /usr/share/debconf/confmodule
+
+
+   # First make sure the cfgdir exists
+   if [ ! -d $cfgdir ]; then
+     mkdir -p $cfgdir
+   fi
+
+   echo "FRIENDLYNAME      \"GPR400 SmartCard Reader\"" > $cfg
+   echo "DEVICENAME        /dev/gpr400" >> $cfg
+   echo "LIBPATH           /usr/lib/pcsc/drivers/gpr400/libgpr400_ifd.so" >> $cfg
+   echo "CHANNELID         5" >> $cfg
+
+
+   # regenerate /etc/reader.conf if update-reader.conf is available
+   if [ -x /usr/sbin/update-reader.conf ]; then
+     /usr/sbin/update-reader.conf || true
+   fi
+
+  if [ -x /etc/init.d/pcscd ]; then
+    invoke-rc.d pcscd restart 3>/dev/null
+  fi
+fi
+
+#DEBHELPER#

@@ -1,0 +1,19 @@
+#!/bin/sh
+# Copyright (C) 2008 Mario Limonciello
+
+CVERSION=`dpkg-query -W -f='${Version}' gpr400cs-source | awk -F "-" '{print $1}' | cut -d\: -f2`
+
+case "$1" in
+	configure)
+
+		#Create DKMS modules
+		echo "Adding Module to DKMS build system"
+		dkms add -m gpr400cs -v $CVERSION > /dev/null
+		echo "Doing initial module build"
+		dkms build -m gpr400cs -v $CVERSION > /dev/null
+		echo "Installing initial module"
+		dkms install -m gpr400cs -v $CVERSION --force > /dev/null
+		echo "Done."
+	;;
+esac
+#DEBHELPER#
