@@ -1,0 +1,19 @@
+Some years ago, i used an GPR400 PCMCIA smartcard 'adaptor',
+and crawl a bit around the net to find a working driver for linux.
+
+I've found some versions by differents authors:
+
+- Pierrick Hascoet 
+- Henry Plötz
+- Jaiger
+
+And i tried to maintain it against the linux kernel changes, and
+also built debian or ubuntu packages for it. 
+I also received the help of Jose Antonio Sánchez Vázquez <jasvazquez@gmail.com>.
+
+I don't use the device anymore because my new computer doesn't have any PCMCIA
+port.
+
+So, i leave here the last sources i had *in case it helps*.
+
+Jean.
